@@ -60,6 +60,7 @@ export default function LoginPage() {
               <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
+                autoComplete="email"
                 required
                 value={formData.email}
                 onChange={(e) =>
@@ -77,6 +78,7 @@ export default function LoginPage() {
               <FiLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="password"
+                autoComplete="current-password"
                 required
                 value={formData.password}
                 onChange={(e) =>
