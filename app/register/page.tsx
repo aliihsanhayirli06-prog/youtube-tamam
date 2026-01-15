@@ -63,14 +63,17 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2">Ad Soyad</label>
+            <label htmlFor="register-name" className="block text-sm font-medium mb-2">Ad Soyad</label>
             <div className="relative">
               <FiUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
+                id="register-name"
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
                 className="w-full pl-12 pr-4 py-3 bg-dark-700 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 transition-all"
                 placeholder="Adınız Soyadınız"
               />
@@ -78,14 +81,17 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">E-posta</label>
+            <label htmlFor="register-email" className="block text-sm font-medium mb-2">E-posta</label>
             <div className="relative">
               <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
+                id="register-email"
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
                 className="w-full pl-12 pr-4 py-3 bg-dark-700 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 transition-all"
                 placeholder="ornek@email.com"
               />
@@ -93,14 +99,17 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Şifre</label>
+            <label htmlFor="register-password" className="block text-sm font-medium mb-2">Şifre</label>
             <div className="relative">
               <FiLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
+                id="register-password"
                 type="password"
                 required
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, password: e.target.value }))
+                }
                 className="w-full pl-12 pr-4 py-3 bg-dark-700 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 transition-all"
                 placeholder="••••••••"
               />
@@ -108,14 +117,20 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Şifre Tekrar</label>
+            <label htmlFor="register-confirm" className="block text-sm font-medium mb-2">Şifre Tekrar</label>
             <div className="relative">
               <FiLock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
+                id="register-confirm"
                 type="password"
                 required
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    confirmPassword: e.target.value
+                  }))
+                }
                 className="w-full pl-12 pr-4 py-3 bg-dark-700 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 transition-all"
                 placeholder="••••••••"
               />

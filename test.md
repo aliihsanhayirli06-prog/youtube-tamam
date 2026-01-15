@@ -2,9 +2,9 @@
 
 Status: PARTIAL RUN (E2E + unit + component + integration)
 Last E2E run: 9 passed
-Last unit+component+integration run: 80 passed / 1 failed / 1 skipped (CMD kosumu)
-Latest test run: 1 test FAIL, 1 test SKIPPED
-Pass oranı (skip hariç): %98.77 (80 / 81)
+Last unit+component+integration run: 81 passed / 1 skipped (CMD kosumu)
+Latest test run: full `npm run test:coverage` OK (81/82, 1 skipped)
+Pass oranı (skip hariç): %100 (81 / 81)
 Environment: local `npm run dev` / Docker `docker compose up`
 
 ## 0) Preconditions
@@ -96,7 +96,7 @@ Environment: local `npm run dev` / Docker `docker compose up`
 
 ## Coverage
 - Automated test suite is present (unit/component/integration + E2E).
-- Latest run blocked: `vitest` failed to start due to `esbuild` spawn `EPERM` on Windows.
+- Son kosum (full): Statements %71.68, Branch %52.85, Funcs %63.71, Lines %73.58.
 
 ## 100% Coverage Requirements (Plan)
 - [x] Add unit test runner + coverage tooling
@@ -110,9 +110,11 @@ Environment: local `npm run dev` / Docker `docker compose up`
 - [x] Coverage report generated and reviewed
 
 ## Coverage Status (Latest)
-- Overall coverage: TAMAMLAMA YOK (1 test fail, 1 test skip). Coverage yüzdesi test çıktısında görünmedi.
+- Overall coverage: TAMAMLAMA YOK (genel kosumda 1 skip var).
 - Command: `npm run test:coverage`
-- Son kosumda fail olan test:
-  - `tests/component/auth-pages.test.tsx`: register success akisi `push('/channel-setup')` cagrisi gelmiyor.
-- Skip edilen test:
+- Son kosum (full):
+  - Tests: 81 passed, 1 skipped.
+  - Coverage: Statements %71.68, Branch %52.85, Funcs %63.71, Lines %73.58.
+- Skip edilen test (genel kosum):
   - `tests/component/dashboard-page.test.tsx`: `refreshes trends and generates video` (zaman alici).
+- Skip notu: Bu test zaman alan senaryo oldugu icin su an devre disi, daha sonra gercek API/mocks ile stabilize edilecek.
