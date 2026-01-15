@@ -5,9 +5,6 @@ import { motion } from 'framer-motion'
 import { FiArrowLeft, FiCheck, FiX, FiZap, FiStar, FiYoutube, FiFacebook, FiInstagram, FiTwitter, FiTrendingUp, FiUsers, FiVideo, FiShield, FiMusic } from 'react-icons/fi'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import { useSearchParams } from 'next/navigation'
-
-export const dynamic = 'force-dynamic'
 
 export default function PremiumPage() {
   const [selectedPlan, setSelectedPlan] = useState<'free' | 'pro' | 'premium'>('pro')
@@ -16,18 +13,17 @@ export default function PremiumPage() {
   const [isPortalLoading, setIsPortalLoading] = useState(false)
   const [creditsBalance, setCreditsBalance] = useState<number | null>(null)
   const [currentPlan, setCurrentPlan] = useState<string>('FREE')
-  const searchParams = useSearchParams()
-
   useEffect(() => {
-    const success = searchParams.get('success')
-    const cancel = searchParams.get('cancel')
+    const params = new URLSearchParams(window.location.search)
+    const success = params.get('success')
+    const cancel = params.get('cancel')
     if (success) {
       toast.success('Odeme basarili! Premium etkinlestirildi.')
     }
     if (cancel) {
       toast.error('Odeme iptal edildi.')
     }
-  }, [searchParams])
+  }, [])
 
   useEffect(() => {
     const loadUser = async () => {
