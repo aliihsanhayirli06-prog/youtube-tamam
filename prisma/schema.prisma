@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PlanTier {
+  FREE
+  PRO
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum ChannelStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+}
+
+enum VideoStatus {
+  DRAFT
+  PROCESSING
+  READY
+  PUBLISHED
+  SCHEDULED
+}
+
+enum CompetitionLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TrendSource {
+  YOUTUBE
+  GOOGLE
+  TWITTER
+  TIKTOK
+}
+
+enum WorkerType {
+  TREND_RESEARCHER
+  SCRIPT_WRITER
+  THUMBNAIL_CREATOR
+  SEO_OPTIMIZER
+  SCHEDULER
+}
+
+enum WorkerStatus {
+  IDLE
+  WORKING
+  COMPLETED
+  ERROR
+}
+
+enum IntegrationProvider {
+  YOUTUBE
+  OPENAI
+  RUNWAY
+}
+
+enum UsageEventType {
+  CHANNEL_CONNECTED
+  TREND_REFRESHED
+  VIDEO_GENERATED
+  VIDEO_PUBLISHED
+  PLAN_UPGRADED
+}
+
+enum CreditReason {
+  DAILY_GRANT
+  PURCHASE
+  REFERRAL_BONUS
+  SPEND_TREND
+  SPEND_SCRIPT
+  SPEND_SEO
+  ADMIN_ADJUST
+}
+
+model User {
+  id          String        @id @default(cuid())
+  name        String
+  email       String        @unique
+  avatarUrl   String?
+  plan        PlanTier      @default(FREE)
+  creditsBalance Int        @default(0)
+  creditsResetAt DateTime?
+  referralCode String?      @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  channels    Channel[]
+  subscriptions Subscription[]
+  integrations Integration[]
+  videos      Video[]       @relation("UserVideos")
+  usageEvents UsageEvent[]
+  creditTransactions CreditTransaction[]
+}
+
+model Subscription {
+  id                 String              @id @default(cuid())
+  userId             String
+  plan               PlanTier
+  status             SubscriptionStatus  @default(ACTIVE)
+  provider           String?
+  providerCustomerId String?
+  providerSubscriptionId String? @unique
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Channel {
+  id                String        @id @default(cuid())
+  userId            String
+  name              String
+  youtubeChannelId  String?
+  status            ChannelStatus @default(DISCONNECTED)
+  connectedAt       DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videos            Video[]
+  aiWorkers         AiWorker[]
+}
+
+model Video {
+  id           String      @id @default(cuid())
+  userId       String
+  channelId    String?
+  title        String
+  description  String?
+  thumbnailUrl String?
+  status       VideoStatus @default(DRAFT)
+  views        Int         @default(0)
+  likes        Int         @default(0)
+  trendScore   Int?
+  script       String?
+  voiceText    String?
+  durationSec  Int?
+  promptText   String?
+  model        String?
+  resolution   String?
+  runwayTaskId String?
+  runwayStatus String?
+  runwayOutputUrl String?
+  publishedAt  DateTime?
+  scheduledAt  DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user         User        @relation("UserVideos", fields: [userId], references: [id], onDelete: Cascade)
+  channel      Channel?    @relation(fields: [channelId], references: [id], onDelete: SetNull)
+  chapters     VideoChapter[]
+  tags         VideoTag[]
+}
+
+model VideoChapter {
+  id        String   @id @default(cuid())
+  videoId   String
+  timecode  String
+  title     String
+
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id     String     @id @default(cuid())
+  name   String     @unique
+
+  videos VideoTag[]
+}
+
+model VideoTag {
+  videoId String
+  tagId   String
+
+  video   Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, tagId])
+}
+
+model TrendTopic {
+  id            String           @id @default(cuid())
+  title         String
+  category      String
+  trendScore    Int
+  searchVolume  String
+  competition   CompetitionLevel
+  growthRate    String
+  source        TrendSource
+  discoveredAt  DateTime
+  createdAt     DateTime         @default(now())
+
+  keywords      TrendKeyword[]
+}
+
+model TrendKeyword {
+  id          String     @id @default(cuid())
+  trendId     String
+  keyword     String
+
+  trend       TrendTopic @relation(fields: [trendId], references: [id], onDelete: Cascade)
+}
+
+model AiWorker {
+  id            String       @id @default(cuid())
+  channelId     String
+  type          WorkerType
+  status        WorkerStatus @default(IDLE)
+  currentTask   String?
+  progress      Int          @default(0)
+  tasksCompleted Int         @default(0)
+  updatedAt     DateTime     @updatedAt
+
+  channel       Channel      @relation(fields: [channelId], references: [id], onDelete: Cascade)
+}
+
+model Integration {
+  id           String               @id @default(cuid())
+  userId       String
+  provider     IntegrationProvider
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  metadata     Json?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UsageEvent {
+  id        String          @id @default(cuid())
+  userId    String
+  type      UsageEventType
+  metadata  Json?
+  createdAt DateTime        @default(now())
+
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CreditTransaction {
+  id        String        @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    CreditReason
+  metadata  Json?
+  createdAt DateTime      @default(now())
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
