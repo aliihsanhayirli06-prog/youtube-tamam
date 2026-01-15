@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { FiYoutube, FiShield, FiCheck } from 'react-icons/fi'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { signIn } from 'next-auth/react'
 
 interface SocialAuthButtonsProps {
   mode?: 'login' | 'register'
@@ -12,12 +13,13 @@ interface SocialAuthButtonsProps {
 export default function SocialAuthButtons({ mode = 'login' }: SocialAuthButtonsProps) {
   const router = useRouter()
 
-  const handleGoogleAuth = () => {
-    toast.success('Google ile giriş yapılıyor...')
-    setTimeout(() => {
-      toast.success('Google ile giriş başarılı!')
-      router.push('/channel-setup')
-    }, 1500)
+  const handleGoogleAuth = async () => {
+    toast.loading('Google ile giriş başlatılıyor...', { id: 'google-auth' })
+    try {
+      await signIn('google', { callbackUrl: '/dashboard' })
+    } catch (err) {
+      toast.error('Google ile giriş baslatilamadi.', { id: 'google-auth' })
+    }
   }
 
   const handleYouTubeAuth = () => {
